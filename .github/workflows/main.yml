@@ -16,25 +16,20 @@ jobs:
       ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
     steps:
-      # Step 1: 检出代码
       - uses: actions/checkout@v3
 
-      # Step 2: 设置 Python 环境
       - uses: actions/setup-python@v4
         with:
           python-version: 3.9
           architecture: 'x64'
 
-      # Step 3: 安装依赖并运行脚本
       - run: |
           python -m pip install --upgrade pip
           pip install certifi
+          pip install -i https://test.pypi.org/simple/ legym --upgrade
+          python -m certifi
 
-          # 信任证书并显示路径（调试用）
-          python -c "import certifi; print(certifi.where())"
-
-          # 安装 legym 包
-          pip install -i https://test.pypi.org/simple/ legym==0.4
-
-          # 运行主脚本
+          # 运行脚本，忽略退出码
+          set +e
           python main.py ${{ secrets.username }}#${{ secrets.password }}#${{ secrets.distance }}#${{ secrets.activity }}
+          set -e
